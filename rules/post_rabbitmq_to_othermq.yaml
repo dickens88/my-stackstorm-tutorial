@@ -1,0 +1,14 @@
+---
+name: "post_rabbitmq_to_othermq"
+description: "Post RabbitMQ message to another queue."
+enabled: true
+
+trigger:
+  type: "rabbitmq.new_message"
+  parameters: {}
+
+action:
+  ref: "tutorial.post_rabbitmq_to_multimq"
+  parameters:
+    queue: "{{ trigger.queue }}"
+    body: "{{ trigger.body }}"

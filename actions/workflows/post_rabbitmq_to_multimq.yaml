@@ -1,0 +1,41 @@
+---
+version: '1.0'
+input:
+  - queue
+  - body
+tasks:
+  channel_branch:
+    action: core.noop
+    next:
+      - when: "{{ '#pyohio' in ctx().body }}"
+        publish:
+          - chat_message: "Received a message on RabbitMQ queue {{ ctx().queue }}\n {{ ctx().body }}"
+        do:
+          - post_to_pyohio
+      - when: "{{ '#stackstorm' in ctx().body }}"
+        publish:
+          - chat_message: "Received a message on RabbitMQ queue {{ ctx().queue }}\n {{ ctx().body }}"
+        do:
+          - post_to_stackstorm
+  post_to_pyohio:
+    action: rabbitmq.publish_message
+    input:
+      host: "10.0.2.15"
+      port: 5672
+      username: "admin"
+      password: "admin"
+      exchange: "demo"
+      exchange_type: "topic"
+      routing_key: "pyohio_key"
+      message: '{{ ctx().chat_message }}'
+  post_to_stackstorm:
+    action: rabbitmq.publish_message
+    input:
+      host: "10.0.2.15"
+      port: 5672
+      username: "admin"
+      password: "admin"
+      exchange: "demo"
+      exchange_type: "topic"
+      routing_key: "stackstorm_key"
+      message: "{{ ctx().chat_message }}"

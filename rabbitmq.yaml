@@ -1,0 +1,9 @@
+---
+sensor_config:
+  host: "10.0.2.15"
+  username: "admin"
+  password: "admin"
+  rabbitmq_queue_sensor:
+    queues:
+      - "demoqueue"
+    deserialization_method: "json"

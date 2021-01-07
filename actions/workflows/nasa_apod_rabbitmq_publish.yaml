@@ -1,0 +1,43 @@
+version: '1.0'
+
+description: nasa image to rabbitmq demo.
+
+input:
+  - date
+  - message
+  - host
+  - exchange
+  - exchange_type
+  - routing_key
+  - username
+  - password
+  - port
+  - exchange_durable
+  
+vars:
+  - apod_url: null
+  - flag: null
+
+tasks:
+    get_apod_url:
+      action: tutorial.nasa_apod date=<% ctx().date %>
+      next:
+      - when: <% succeeded() %>
+        publish: apod_url=<% task('get_apod_url').result.result.url %>, flag=<% ctx(message) %>
+        do: publish_to_rabbitmq
+    
+    publish_to_rabbitmq:
+      action: rabbitmq.publish_message
+      input:
+        host: <% ctx(host) %>
+        exchange: <% ctx(exchange) %>
+        exchange_type: <% ctx(exchange_type) %>
+        routing_key: <% ctx(routing_key) %>
+        message: "<% ctx(apod_url) %>,<% ctx(flag) %>"
+        username: <% ctx(username) %>
+        password: <% ctx(password) %>
+        port: <% ctx(port) %>
+        exchange_durable: <% ctx(exchange_durable) %>
+
+output:
+  - url: <% ctx(apod_url) %>

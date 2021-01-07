@@ -1,0 +1,45 @@
+
+---
+name: nasa_apod_rabbitmq_publish
+pack: tutorial
+description: "Queries NASA's APOD (Astronomy Picture Of the Day) API to get the link to the picture of the day, then publishes that link to a RabbitMQ queue"
+runner_type: orquesta
+enabled: true
+entry_point: workflows/nasa_apod_rabbitmq_publish.yaml
+parameters:
+  date:
+    type: string
+    description: "The date [YYYY-MM-DD] of the APOD image to retrieve."
+  message:
+    type: string
+    default: "halo"
+    description: "Extra message to publish with the URL"
+  host:
+    type: string
+    default: "10.0.2.15"
+  port:
+    type: integer
+    default: 5672
+  exchange:
+    type: string
+    default: "demo"
+    description: "Name of the RabbitMQ exchange"
+  exchange_type:
+    type: string
+    default: "topic"
+    description: "Type of the RabbitMQ exchange"
+  exchange_durable:
+    type: boolean
+    default: false
+  routing_key:
+    type: string
+    default: "demokey"
+    description: "Name of the RabbitMQ routing key"
+  username:
+    type: string
+    default: "admin"
+    description: "user name of rabbitmq"
+  password:
+    type: string
+    default: "admin"
+    description: "password of the rabbitmq"
